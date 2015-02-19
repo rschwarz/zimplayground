@@ -1,13 +1,25 @@
 <html>
   <body>
     <h1>Model</h1>
-    <div>{{.model}}</div>
+    <div>
+      <pre>{{.Model}}</pre>
+    </div>
 
+    {{if .Output}}
     <h1>Results</h1>
     <h2>Solution Values</h2>
-    <div>{{.sol}}</div>
+    <div>
+      <pre>{{.Solution}}</pre>
+    </div>
 
     <h2>Solver Output</h2>
-    <div>{{.out}}</div>
+    <div>
+      <pre>{{.Output}}</pre>
+    </div>
+    {{else}}
+    <div>
+      Solving not complete yet. Please retry later.
+    </div>
+    {{end}}
   </body>
 </html>
