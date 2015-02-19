@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"path"
 )
 
@@ -22,12 +23,28 @@ const (
 	resultTemplate = "html/result.html"
 )
 
+func runSolver(dir string) {
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		return
+	}
+
+	// TODO: add limit on number of parallel solver runs
+
+	commands := fmt.Sprintf("read %s  opt  write solution %s  quit",
+		modelFilename, solutionFilename)
+	cmd := exec.Command("scip", "-c", commands, "-l", outputFilename)
+	cmd.Dir = dir
+	_ = cmd.Run()
+}
+
 func solve(dir string) (err error) {
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		return err
 	}
 
-	// TODO: actually solve
+	// for now, just start new process for every call
+	go runSolver(dir)
+
 	return nil
 }
 
