@@ -4,6 +4,7 @@ import (
 	"crypto/sha1"
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 )
 
@@ -24,6 +25,6 @@ func solveHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	http.HandleFunc("/", inputHandler)
-	http.ListenAndServe(":8080", nil)
 	http.HandleFunc("/solve", solveHandler)
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
