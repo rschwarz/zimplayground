@@ -54,9 +54,7 @@ func inputHandler(w http.ResponseWriter, r *http.Request) {
 
 func solveHandler(w http.ResponseWriter, r *http.Request) {
 	model := r.FormValue("model")
-	fmt.Println("Model:", model)
 	hash := fmt.Sprintf("%x", sha1.Sum([]byte(model)))
-	fmt.Println("Hash:", hash)
 
 	dir := path.Join(resultsDir, hash)
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
