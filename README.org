@@ -1,0 +1,17 @@
+#+TITLE: Zimplayground - Try SCIP with Zimpl through your browser
+
+* Purpose
+Inspired by the Go Playground, let users solve small Zimpl models
+without the need to install anything. The models are solved on the
+server with SCIP. The log output and solution values are provided to
+the caller.
+
+* Dependencies
+It is assumed that SCIP (with Zimpl) is installed on the server and
+available in the =PATH=. See http://scip.zib.de for documentation on
+the installation process.
+
+* Licensing
+All of this code is MIT licensed. SCIP is available for academic use
+under the 'ZIB academic license'.
+
