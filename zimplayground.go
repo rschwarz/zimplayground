@@ -3,7 +3,6 @@ package main
 import (
 	"crypto/sha1"
 	"fmt"
-	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -18,9 +17,6 @@ const (
 	modelFilename    = "model.zpl"
 	solutionFilename = "scip.sol"
 	outputFilename   = "output.log"
-
-	inputTemplate  = "html/input.html"
-	resultTemplate = "html/result.html"
 )
 
 func runSolver(dir string) {
@@ -49,12 +45,7 @@ func solve(dir string) (err error) {
 }
 
 func inputHandler(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles(inputTemplate)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	err = t.Execute(w, nil)
+	err := inputTemplate.Execute(w, nil)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -134,13 +125,7 @@ func resultHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	t, err := template.ParseFiles(resultTemplate)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	err = t.Execute(w, res)
-	if err != nil {
+	if err := resultTemplate.Execute(w, res); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
