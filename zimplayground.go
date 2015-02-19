@@ -1,6 +1,8 @@
 package main
 
 import (
+	"crypto/sha1"
+	"fmt"
 	"html/template"
 	"net/http"
 )
@@ -12,7 +14,16 @@ func inputHandler(w http.ResponseWriter, r *http.Request) {
 	t.Execute(w, nil)
 }
 
+func solveHandler(w http.ResponseWriter, r *http.Request) {
+	model := r.FormValue("model")
+	hash := fmt.Sprintf("%x", sha1.Sum([]byte(model)))
+	// TODO: solve problem
+
+	http.Redirect(w, r, "/result/"+hash, http.StatusFound)
+}
+
 func main() {
 	http.HandleFunc("/", inputHandler)
 	http.ListenAndServe(":8080", nil)
+	http.HandleFunc("/solve", solveHandler)
 }
