@@ -5,8 +5,7 @@ import (
 )
 
 const inputTemplateStr string = `
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-  "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <html>
   <head>
     <title>Model Input</title>
@@ -26,8 +25,7 @@ const inputTemplateStr string = `
 var inputTemplate = template.Must(template.New("input").Parse(inputTemplateStr))
 
 const resultTemplateStr string = `
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-  "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <html>
   <head>
     <title>Solver Output</title>
