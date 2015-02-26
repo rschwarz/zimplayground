@@ -13,18 +13,11 @@ const inputTemplateStr string = `
     <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
   </head>
   <body>
-    <h1>Model Input</h1>
-
-    <form action="/solve/" method="POST">
-      <div>
-        Input your Zimpl model here:
-      </div>
-      <div>
-        <textarea name="model" rows="24" cols="80"></textarea>
-      </div>
-      <div>
-        <input type="submit" value="Solve">
-      </div>
+    <h2>Model Input</h2>
+    <form action="/solve/" method="POST" class="pure-form">
+      <div><label>Input your Zimpl model here:</label></div>
+      <div><textarea name="model" rows="24" cols="80"></textarea></div>
+      <div><input type="submit" value="Solve" class="pure-button"></div>
     </form>
   </body>
 </html>
@@ -41,26 +34,17 @@ const resultTemplateStr string = `
     <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
   </head>
   <body>
-    <h1>Model</h1>
-    <div>
-      <pre>{{.Model}}</pre>
-    </div>
+    <h2>Model</h2>
+    <div><pre>{{.Model}}</pre></div>
 
     {{if .Output}}
-    <h1>Results</h1>
     <h2>Solution Values</h2>
-    <div>
-      <pre>{{.Solution}}</pre>
-    </div>
+    <div><pre>{{.Solution}}</pre></div>
 
     <h2>Solver Output</h2>
-    <div>
-      <pre>{{.Output}}</pre>
-    </div>
+    <div><pre>{{.Output}}</pre></div>
     {{else}}
-    <div>
-      Solving not complete yet. Please retry later.
-    </div>
+    <p>Solving not complete yet. Please retry later.</p>
     {{end}}
   </body>
 </html>
