@@ -10,6 +10,7 @@ const inputTemplateStr string = `
 <html>
   <head>
     <title>Model Input</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
   </head>
   <body>
     <h1>Model Input</h1>
@@ -37,6 +38,7 @@ const resultTemplateStr string = `
 <html>
   <head>
     <title>Solver Output</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
   </head>
   <body>
     <h1>Model</h1>
