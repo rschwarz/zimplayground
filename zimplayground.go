@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"time"
 )
 
 const (
@@ -77,6 +78,10 @@ func solveHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+
+	// add short sleep so that result might already exist when we
+	// finally redirect.
+	time.Sleep(100 * time.Millisecond)
 
 	http.Redirect(w, r, "/result/"+hash, http.StatusFound)
 }
