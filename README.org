@@ -6,6 +6,16 @@ without the need to install anything. The models are solved on the
 server with SCIP. The log output and solution values are provided to
 the caller.
 
+* Usage
+#+BEGIN_SRC
+$ ./zimplayground -h
+Usage of ./zimplayground:
+  -address=":8080": hostname:port of server
+  -mem=100: SCIP memory limit (MB)
+  -processes=4: limit on number of SCIP processes
+  -sleep=100: sleep before redirect to results (ms)
+  -time=180: SCIP time limit (s)
+#+END_SRC
 * Dependencies
 It is assumed that SCIP (with Zimpl) is installed on the server and
 available in the =PATH=. See http://scip.zib.de for documentation on
