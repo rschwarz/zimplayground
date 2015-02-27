@@ -16,7 +16,9 @@ const inputTemplateStr string = `
       <h2>Model Input</h2>
       <form action="/solve/" method="POST">
         <div><label>Input your Zimpl model here:</label></div>
-        <div><textarea name="model" rows="24" class="form-control"></textarea></div>
+        <div style="font-family:monospace;">
+          <textarea name="model" rows="24" class="form-control"></textarea>
+        </div>
         <button type="submit" class="btn btn-default">Solve</button>
       </form>
     </div>
