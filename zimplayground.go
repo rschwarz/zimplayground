@@ -61,7 +61,11 @@ func runSolver(job Job, sem Sem) {
 
 	commands := fmt.Sprintf("set limits time %d "+
 		"set limits memory %d "+
-		"read %s  opt  write solution %s  quit",
+		"read %s "+
+		"optimize "+
+		"display statistics "+
+		"write solution %s "+
+		"quit",
 		*timeLimitSec, *memoryLimitMB,
 		modelFilename, solutionFilename)
 	cmd := exec.Command(*scipExec, "-c", commands, "-l", outputFilename)
