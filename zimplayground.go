@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/sha1"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -18,9 +19,13 @@ const (
 	modelFilename    = "model.zpl"
 	solutionFilename = "scip.sol"
 	outputFilename   = "output.log"
+)
 
-	timeLimitSec  = 3 * 60
-	memoryLimitMB = 100
+var (
+	timeLimitSec  = flag.Int("time", 3*60, "SCIP time limit (s)")
+	memoryLimitMB = flag.Int("mem", 100, "SCIP memory limit (MB)")
+	sleepTime     = flag.Int("sleep", 100, "sleep before redirect to results (ms)")
+	address       = flag.String("address", ":8080", "hostname:port of server")
 )
 
 func runSolver(dir string) {
@@ -33,7 +38,7 @@ func runSolver(dir string) {
 	commands := fmt.Sprintf("set limits time %d "+
 		"set limits memory %d "+
 		"read %s  opt  write solution %s  quit",
-		timeLimitSec, memoryLimitMB,
+		*timeLimitSec, *memoryLimitMB,
 		modelFilename, solutionFilename)
 	cmd := exec.Command("scip", "-c", commands, "-l", outputFilename)
 	cmd.Dir = dir
@@ -87,7 +92,7 @@ func solveHandler(w http.ResponseWriter, r *http.Request) {
 
 	// add short sleep so that result might already exist when we
 	// finally redirect.
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(time.Duration(*sleepTime) * time.Millisecond)
 
 	http.Redirect(w, r, "/result/"+hash, http.StatusFound)
 }
@@ -140,8 +145,10 @@ func resultHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	flag.Parse()
+
 	http.HandleFunc("/", inputHandler)
 	http.HandleFunc("/solve/", solveHandler)
 	http.HandleFunc("/result/", resultHandler)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(*address, nil))
 }
