@@ -42,13 +42,19 @@ func runSolver(dir string) {
 		modelFilename, solutionFilename)
 	cmd := exec.Command("scip", "-c", commands, "-l", outputFilename)
 	cmd.Dir = dir
-	_ = cmd.Run()
+	_ = cmd.Start()
+	log.Printf("Solver in %s started with PID %d", dir, cmd.Process.Pid)
+	_ = cmd.Wait()
+
+	log.Printf("Solver finished in %s", dir)
 }
 
 func solve(dir string) (err error) {
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		return err
 	}
+
+	log.Printf("Starting solver in %s", dir)
 
 	// for now, just start new process for every call
 	go runSolver(dir)
@@ -67,6 +73,8 @@ func inputHandler(w http.ResponseWriter, r *http.Request) {
 func solveHandler(w http.ResponseWriter, r *http.Request) {
 	model := r.FormValue("model")
 	hash := fmt.Sprintf("%x", sha1.Sum([]byte(model)))
+
+	log.Printf("Request for model %s", hash)
 
 	dir := path.Join(resultsDir, hash)
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
@@ -150,5 +158,7 @@ func main() {
 	http.HandleFunc("/", inputHandler)
 	http.HandleFunc("/solve/", solveHandler)
 	http.HandleFunc("/result/", resultHandler)
+
+	log.Printf("listening on %s", *address)
 	log.Fatal(http.ListenAndServe(*address, nil))
 }
