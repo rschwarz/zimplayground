@@ -18,6 +18,9 @@ const (
 	modelFilename    = "model.zpl"
 	solutionFilename = "scip.sol"
 	outputFilename   = "output.log"
+
+	timeLimitSec  = 3 * 60
+	memoryLimitMB = 100
 )
 
 func runSolver(dir string) {
@@ -27,7 +30,10 @@ func runSolver(dir string) {
 
 	// TODO: add limit on number of parallel solver runs
 
-	commands := fmt.Sprintf("read %s  opt  write solution %s  quit",
+	commands := fmt.Sprintf("set limits time %d "+
+		"set limits memory %d "+
+		"read %s  opt  write solution %s  quit",
+		timeLimitSec, memoryLimitMB,
 		modelFilename, solutionFilename)
 	cmd := exec.Command("scip", "-c", commands, "-l", outputFilename)
 	cmd.Dir = dir
