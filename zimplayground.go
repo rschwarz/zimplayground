@@ -29,6 +29,7 @@ var (
 	sleepTime     = flag.Int("sleep", 100, "sleep before redirect to results (ms)")
 	address       = flag.String("address", ":8080", "hostname:port of server")
 	processLimit  = flag.Int("processes", 4, "limit on number of SCIP processes")
+	scipExec      = flag.String("scipExec", "scip", "(path to) scip executable")
 )
 
 // a job is identified by the path to run in
@@ -63,7 +64,7 @@ func runSolver(job Job, sem Sem) {
 		"read %s  opt  write solution %s  quit",
 		*timeLimitSec, *memoryLimitMB,
 		modelFilename, solutionFilename)
-	cmd := exec.Command("scip", "-c", commands, "-l", outputFilename)
+	cmd := exec.Command(*scipExec, "-c", commands, "-l", outputFilename)
 	cmd.Dir = job.dir
 	_ = cmd.Start()
 	log.Printf("Solver in %s started with PID %d", job.dir, cmd.Process.Pid)
@@ -182,6 +183,14 @@ func resultHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	flag.Parse()
+
+	// check that solver exists
+	scipPath, err := exec.LookPath(*scipExec)
+	if err != nil {
+		log.Fatalf("No solver executable found at %s!", *scipExec)
+	} else {
+		log.Printf("Using solver executable at %s.", scipPath)
+	}
 
 	// semaphore for number of go routines starting processes
 	var sem = make(Sem, *processLimit)

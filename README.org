@@ -13,6 +13,7 @@ Usage of ./zimplayground:
   -address=":8080": hostname:port of server
   -mem=100: SCIP memory limit (MB)
   -processes=4: limit on number of SCIP processes
+  -scipExec="scip": (path to) scip executable
   -sleep=100: sleep before redirect to results (ms)
   -time=180: SCIP time limit (s)
 #+END_SRC
