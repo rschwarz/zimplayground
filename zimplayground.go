@@ -19,6 +19,8 @@ const (
 	modelFilename    = "model.zpl"
 	solutionFilename = "scip.sol"
 	outputFilename   = "output.log"
+
+	queueLength = 1024
 )
 
 var (
@@ -26,14 +28,35 @@ var (
 	memoryLimitMB = flag.Int("mem", 100, "SCIP memory limit (MB)")
 	sleepTime     = flag.Int("sleep", 100, "sleep before redirect to results (ms)")
 	address       = flag.String("address", ":8080", "hostname:port of server")
+	processLimit  = flag.Int("processes", 4, "limit on number of SCIP processes")
 )
 
-func runSolver(dir string) {
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
+// a job is identified by the path to run in
+type Job struct {
+	dir string
+}
+
+// channel-based semaphore
+type Sem chan int
+
+// the solveHandler submits jobs here, the workers get them
+var queue = make(chan Job, queueLength)
+
+// take jobs from queue and start processes
+// cf. github.com/golang/go/wiki/BoundingResourceUse
+func processQueue(sem Sem) {
+	for {
+		sem <- 1 // block until there's capacity to start a new process
+		job := <-queue
+		go runSolver(job, sem) // don't wait for solver to finish.
+	}
+}
+
+// run subprocess and wait to finish
+func runSolver(job Job, sem Sem) {
+	if _, err := os.Stat(job.dir); os.IsNotExist(err) {
 		return
 	}
-
-	// TODO: add limit on number of parallel solver runs
 
 	commands := fmt.Sprintf("set limits time %d "+
 		"set limits memory %d "+
@@ -41,23 +64,28 @@ func runSolver(dir string) {
 		*timeLimitSec, *memoryLimitMB,
 		modelFilename, solutionFilename)
 	cmd := exec.Command("scip", "-c", commands, "-l", outputFilename)
-	cmd.Dir = dir
+	cmd.Dir = job.dir
 	_ = cmd.Start()
-	log.Printf("Solver in %s started with PID %d", dir, cmd.Process.Pid)
+	log.Printf("Solver in %s started with PID %d", job.dir, cmd.Process.Pid)
 	_ = cmd.Wait()
 
-	log.Printf("Solver finished in %s", dir)
+	log.Printf("Solver finished in %s", job.dir)
+
+	<-sem // done, resource freed
 }
 
-func solve(dir string) (err error) {
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
+// submit job to queue
+func submit(job Job) (err error) {
+	if _, err := os.Stat(job.dir); os.IsNotExist(err) {
 		return err
 	}
 
-	log.Printf("Starting solver in %s", dir)
+	log.Printf("Submitting job for %s", job.dir)
 
-	// for now, just start new process for every call
-	go runSolver(dir)
+	// submit job to queue, never block
+	go func() {
+		queue <- job
+	}()
 
 	return nil
 }
@@ -91,7 +119,7 @@ func solveHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err = solve(dir)
+		err = submit(Job{dir})
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -154,6 +182,10 @@ func resultHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	flag.Parse()
+
+	// semaphore for number of go routines starting processes
+	var sem = make(Sem, *processLimit)
+	go processQueue(sem)
 
 	http.HandleFunc("/", inputHandler)
 	http.HandleFunc("/solve/", solveHandler)
