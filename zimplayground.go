@@ -95,8 +95,16 @@ func submit(job Job) (err error) {
 	return nil
 }
 
+type Input struct {
+	Model string
+}
+
 func inputHandler(w http.ResponseWriter, r *http.Request) {
-	err := inputTemplate.Execute(w, nil)
+	// optional prefilled model text
+	prefilled := r.FormValue("prefilled")
+	input := &Result{Model: prefilled}
+
+	err := inputTemplate.Execute(w, input)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -201,6 +209,7 @@ func main() {
 	go processQueue(sem)
 
 	http.HandleFunc("/", inputHandler)
+	http.HandleFunc("/input/", inputHandler)
 	http.HandleFunc("/solve/", solveHandler)
 	http.HandleFunc("/result/", resultHandler)
 

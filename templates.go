@@ -17,7 +17,7 @@ const inputTemplateStr string = `
       <form action="/solve/" method="POST">
         <div><label>Input your Zimpl model here:</label></div>
         <div style="font-family:monospace;">
-          <textarea name="model" rows="24" class="form-control"></textarea>
+          <textarea name="model" rows="24" class="form-control">{{.Model}}</textarea>
         </div>
         <button type="submit" class="btn btn-default">Solve</button>
       </form>
@@ -39,7 +39,11 @@ const resultTemplateStr string = `
     <div class="container-fluid">
       <h2>Model</h2>
       <div><pre>{{.Model}}</pre></div>
-      
+      <form action="/input/" method="POST">
+        <input type="hidden" name="prefilled" value="{{.Model}}">
+        <button type="submit" class="btn btn-default">Edit</button>
+      </form>
+
       {{if .Output}}
       <h2>Solution Values</h2>
       <div><pre>{{.Solution}}</pre></div>
