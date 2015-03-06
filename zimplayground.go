@@ -59,6 +59,12 @@ func runSolver(job Job, sem Sem) {
 		return
 	}
 
+	outputFile, err := os.Create(path.Join(job.dir, outputFilename))
+	if err != nil {
+		return
+	}
+	defer outputFile.Close()
+
 	commands := fmt.Sprintf("set limits time %d "+
 		"set limits memory %d "+
 		"read %s "+
@@ -68,8 +74,11 @@ func runSolver(job Job, sem Sem) {
 		"quit",
 		*timeLimitSec, *memoryLimitMB,
 		modelFilename, solutionFilename)
-	cmd := exec.Command(*scipExec, "-c", commands, "-l", outputFilename)
+	cmd := exec.Command(*scipExec, "-c", commands)
 	cmd.Dir = job.dir
+	cmd.Stdout = outputFile
+	cmd.Stderr = outputFile
+
 	_ = cmd.Start()
 	log.Printf("Solver in %s started with PID %d", job.dir, cmd.Process.Pid)
 	_ = cmd.Wait()
