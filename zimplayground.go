@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"syscall"
 	"time"
 )
 
@@ -79,9 +80,24 @@ func runSolver(job Job, sem Sem) {
 	cmd.Stdout = outputFile
 	cmd.Stderr = outputFile
 
-	_ = cmd.Start()
+	if err := cmd.Start(); err != nil {
+		log.Printf("Solver in %s failed to start.", job.dir)
+	}
 	log.Printf("Solver in %s started with PID %d", job.dir, cmd.Process.Pid)
-	_ = cmd.Wait()
+
+	if err := cmd.Wait(); err != nil {
+		if exiterr, ok := err.(*exec.ExitError); ok {
+			// The program has exited with an exit code != 0
+			if status, ok := exiterr.Sys().(syscall.WaitStatus); ok {
+				log.Printf("Solver in %s failed with code %d.",
+					job.dir, status.ExitStatus())
+				fmt.Fprintf(outputFile, "Terminated with return code %d!",
+					status.ExitStatus())
+			}
+		} else {
+			log.Print("Solver in %s failed: %v", job.dir, err)
+		}
+	}
 
 	log.Printf("Solver finished in %s", job.dir)
 
