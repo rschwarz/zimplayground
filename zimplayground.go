@@ -237,6 +237,8 @@ func main() {
 	http.HandleFunc("/input/", inputHandler)
 	http.HandleFunc("/solve/", solveHandler)
 	http.HandleFunc("/result/", resultHandler)
+	http.Handle("/static/",
+		http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	log.Printf("listening on %s", *address)
 	log.Fatal(http.ListenAndServe(*address, nil))
