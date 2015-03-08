@@ -13,7 +13,7 @@ const inputTemplateStr string = `
   </head>
   <body>
     <div class="container-fluid">
-      <h2>Model Input</h2>
+      <h3>Model Input</h3>
       <form action="/solve/" method="POST">
         <div><label>Input your Zimpl model here:</label></div>
         <div style="font-family:monospace;">
@@ -37,7 +37,7 @@ const resultTemplateStr string = `
   </head>
   <body>
     <div class="container-fluid">
-      <h2>Model</h2>
+      <h3>Model</h3>
       <div><pre>{{.Model}}</pre></div>
       <form action="/input/" method="POST">
         <input type="hidden" name="prefilled" value="{{.Model}}">
@@ -45,10 +45,10 @@ const resultTemplateStr string = `
       </form>
 
       {{if .Output}}
-      <h2>Solution Values</h2>
+      <h3>Solution Values</h3>
       <div><pre>{{.Solution}}</pre></div>
       
-      <h2>Solver Output</h2>
+      <h3>Solver Output</h3>
       <div><pre>{{.Output}}</pre></div>
       {{else}}
       <p>Solving not complete yet. Please retry later.</p>
