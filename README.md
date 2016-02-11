@@ -9,7 +9,7 @@ the caller.
 Results are also stored and can be shared between users via unique IDs
 from hashes of the input data.
 
-** Usage
+## Usage
 ```
 $ ./zimplayground -h
 Usage of ./zimplayground:
@@ -21,13 +21,13 @@ Usage of ./zimplayground:
   -time=180: SCIP time limit (s)
 ```
 
-** Dependencies
+## Dependencies
 It is assumed that SCIP (with Zimpl) is installed on the server and
 available in the =PATH= or explicitely specified as command-line flag.
 
 See http://scip.zib.de for documentation on the installation process.
 
-** Licensing
+## Licensing
 All of this code is MIT licensed. SCIP is available for academic use
 under the "ZIB academic license".
 
