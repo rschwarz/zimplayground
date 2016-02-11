@@ -1,5 +1,7 @@
 # Solve Zimpl models with the SCIP solver via the browser
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/leethargo/zimplayground)](https://goreportcard.com/report/github.com/leethargo/zimplayground)
+
 ## Purpose
 Inspired by the Go Playground, let users solve small Zimpl models
 without the need to install anything. The models are solved on the
