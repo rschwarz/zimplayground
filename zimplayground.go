@@ -33,12 +33,12 @@ var (
 	scipExec      = flag.String("scipExec", "scip", "(path to) scip executable")
 )
 
-// a job is identified by the path to run in
+// A Job is identified by the path to run in
 type Job struct {
 	dir string
 }
 
-// channel-based semaphore
+// Sem is a channel-based semaphore
 type Sem chan int
 
 // the solveHandler submits jobs here, the workers get them
@@ -120,6 +120,7 @@ func submit(job Job) (err error) {
 	return nil
 }
 
+// The Input contains the whole model text.
 type Input struct {
 	Model string
 }
@@ -171,6 +172,8 @@ func solveHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/result/"+hash, http.StatusFound)
 }
 
+// The Result contains several segments of text, including the input,
+// log and solution
 type Result struct {
 	Hash     string
 	Model    string
