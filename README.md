@@ -32,5 +32,5 @@ installation process.
 
 ## Licensing
 All of this code is MIT licensed. SCIP is available for academic use under the
-terms of the [http://scip.zib.de/academic.txt](ZIB academic license).
+terms of the [ZIB academic license](http://scip.zib.de/academic.txt).
 
